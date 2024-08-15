@@ -95,6 +95,7 @@ V4L2Camera::V4L2Camera(rclcpp::NodeOptions const & options)
   }
 
   cinfo_ = std::make_shared<camera_info_manager::CameraInfoManager>(this, camera_->getCameraName());
+  RCLCPP_INFO(get_logger(), "camera name ..........%s\n", camera_->getCameraName().c_str());
 #ifdef ENABLE_CUDA
   src_dev_ = std::allocate_shared<GPUMemoryManager>(allocator_);
   dst_dev_ = std::allocate_shared<GPUMemoryManager>(allocator_);

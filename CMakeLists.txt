@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.5)
-project(v4l2_camera)
+project(v4l2_camera_mod)
 
 # Default to C99
 if(NOT CMAKE_C_STANDARD)
@@ -18,74 +18,74 @@ endif()
 # find dependencies
 find_package(ament_cmake_auto REQUIRED)
 ament_auto_find_build_dependencies()
-find_package(CUDA)
+# find_package(CUDA)
 
 if (CUDA_FOUND)
   message(STATUS "CUDA Support is enabled in ${PROJECT_NAME}")
-  cuda_add_library(v4l2_camera
+  cuda_add_library(v4l2_camera_mod
     src/v4l2_camera.cpp
     src/v4l2_camera_device.cpp
   )
-  target_compile_definitions(v4l2_camera PUBLIC
+  target_compile_definitions(v4l2_camera_mod PUBLIC
     ENABLE_CUDA
   )
-  target_include_directories(v4l2_camera PUBLIC
+  target_include_directories(v4l2_camera_mod PUBLIC
     ${CUDA_INCLUDE_DIR}
   )
-  target_link_libraries(v4l2_camera
+  target_link_libraries(v4l2_camera_mod
     ${CUDA_nppicc_LIBRARY}
     ${CUDA_nppisu_LIBRARY}
   )
 else()
-  add_library(v4l2_camera
+  add_library(v4l2_camera_mod
     src/v4l2_camera.cpp
     src/v4l2_camera_device.cpp)
 endif()
-rclcpp_components_register_nodes(v4l2_camera "v4l2_camera::V4L2Camera")
+rclcpp_components_register_nodes(v4l2_camera_mod "v4l2_camera::V4L2Camera")
 
-target_include_directories(v4l2_camera PUBLIC
+target_include_directories(v4l2_camera_mod PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
   $<INSTALL_INTERFACE:include>)
 
-ament_target_dependencies(v4l2_camera
+ament_target_dependencies(v4l2_camera_mod
   "rclcpp"
   "rclcpp_components"
   "image_transport"
   "camera_info_manager")
 
-target_compile_options(v4l2_camera PRIVATE -Werror)
+target_compile_options(v4l2_camera_mod PRIVATE -Werror)
 
 # Causes the visibility macros to use dllexport rather than dllimport,
 # which is appropriate when building the dll but not consuming it.
-target_compile_definitions(v4l2_camera PRIVATE "V4L2_CAMERA_BUILDING_LIBRARY")
+target_compile_definitions(v4l2_camera_mod PRIVATE "V4L2_CAMERA_BUILDING_LIBRARY")
 
 install(
   DIRECTORY include/
   DESTINATION include
 )
 install(
-  TARGETS v4l2_camera
+  TARGETS v4l2_camera_mod
   EXPORT export_${PROJECT_NAME}
   ARCHIVE DESTINATION lib
   LIBRARY DESTINATION lib
   RUNTIME DESTINATION bin
 )
 
-add_executable(v4l2_camera_node src/v4l2_camera_node.cpp)
-target_include_directories(v4l2_camera_node PUBLIC
+add_executable(v4l2_camera_mod_node src/v4l2_camera_node.cpp)
+target_include_directories(v4l2_camera_mod_node PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
   $<INSTALL_INTERFACE:include>)
-target_link_libraries(v4l2_camera_node v4l2_camera)
-target_compile_options(v4l2_camera_node PRIVATE -Werror)
+target_link_libraries(v4l2_camera_mod_node v4l2_camera_mod)
+target_compile_options(v4l2_camera_mod_node PRIVATE -Werror)
 
-add_executable(v4l2_camera_compose_test src/v4l2_camera_compose_test.cpp)
-target_include_directories(v4l2_camera_compose_test PUBLIC
+add_executable(v4l2_camera_mod_compose_test src/v4l2_camera_compose_test.cpp)
+target_include_directories(v4l2_camera_mod_compose_test PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
   $<INSTALL_INTERFACE:include>)
-target_link_libraries(v4l2_camera_compose_test v4l2_camera)
-target_compile_options(v4l2_camera_compose_test PRIVATE -Werror)
+target_link_libraries(v4l2_camera_mod_compose_test v4l2_camera_mod)
+target_compile_options(v4l2_camera_mod_compose_test PRIVATE -Werror)
 
-install(TARGETS v4l2_camera_node v4l2_camera_compose_test
+install(TARGETS v4l2_camera_mod_node v4l2_camera_mod_compose_test
   EXPORT export_${PROJECT_NAME}
   DESTINATION lib/${PROJECT_NAME})
 
@@ -102,7 +102,7 @@ ament_export_targets(
   export_${PROJECT_NAME}
 )
 ament_export_libraries(
-  v4l2_camera
+  v4l2_camera_mod
 )
 
 ament_export_dependencies(
